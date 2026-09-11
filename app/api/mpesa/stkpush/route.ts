@@ -12,7 +12,9 @@ export async function POST(req: NextRequest) {
 
     const shortcode = process.env.MPESA_SHORTCODE || "174379";
     const passkey = process.env.MPESA_PASSKEY;
-    const appUrl = process.env.NEXT_APP_URL;
+    const appUrl =
+      process.env.NEXT_APP_URL ||
+      "https://decode-regional-cafe-rose.vercel.app";
 
     if (!passkey) {
       return NextResponse.json(
