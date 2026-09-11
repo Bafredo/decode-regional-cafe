@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
     const shortcode = process.env.MPESA_SHORTCODE || "174379";
     const passkey = process.env.MPESA_PASSKEY;
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl = process.env.NEXT_APP_URL;
 
     if (!passkey) {
       return NextResponse.json(
