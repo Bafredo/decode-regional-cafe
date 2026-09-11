@@ -125,16 +125,22 @@ async function sendMessage(text: string): Promise<ChatResponse> {
   return res.json();
 }
 
-// ---------------------------------------------------------------------------
-// TODO (Module 03): implement this to POST
-// { phone, amountKes: decision.suggestedDailyKes, goalSummary: decision.goalSummary }
-// to /api/mpesa/stkpush.
-// Run `/daraja-stk-push` in GitHub Copilot Chat, or see
-// workshop/03-daraja-integration/README.md, for the exact shape to wire up.
-// ---------------------------------------------------------------------------
 async function confirmAndSave(
   decision: SavingsDecision,
   phone: string
 ): Promise<void> {
-  throw new Error("confirmAndSave() not implemented yet — see Module 03");
+  const res = await fetch("/api/mpesa/stkpush", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      phone,
+      amountKes: decision.suggestedDailyKes,
+      goalSummary: decision.goalSummary,
+    }),
+  });
+
+  const data = await res.json();
+  if (!res.ok || data.errorCode || (data.ResponseCode && data.ResponseCode !== "0")) {
+    throw new Error(data.errorMessage || data.ResponseDescription || "STK Push failed");
+  }
 }

@@ -12,16 +12,40 @@ export const DARAJA_BASE_URL = "https://sandbox.safaricom.co.ke";
  * TODO (Module 03): implement using MPESA_CONSUMER_KEY / MPESA_CONSUMER_SECRET
  */
 export async function getAccessToken(): Promise<string> {
-  throw new Error("getAccessToken() not implemented yet — see Module 03");
+  const consumerKey = process.env.MPESA_CONSUMER_KEY;
+  const consumerSecret = process.env.MPESA_CONSUMER_SECRET;
+
+  if (!consumerKey || !consumerSecret) {
+    throw new Error(
+      "Missing MPESA_CONSUMER_KEY or MPESA_CONSUMER_SECRET in environment variables."
+    );
+  }
+
+  const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64");
+
+  const res = await fetch(
+    `${DARAJA_BASE_URL}/oauth/v1/generate?grant_type=client_credentials`,
+    {
+      headers: {
+        Authorization: `Basic ${auth}`,
+      },
+    }
+  );
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Failed to get Daraja access token: ${res.status} ${errText}`);
+  }
+
+  const data = await res.json();
+  return data.access_token;
 }
 
 /**
  * Builds the YYYYMMDDHHmmss timestamp Daraja expects.
- *
- * TODO (Module 03): implement
  */
 export function darajaTimestamp(): string {
-  throw new Error("darajaTimestamp() not implemented yet — see Module 03");
+  return new Date().toISOString().replace(/[^0-9]/g, "").slice(0, 14);
 }
 
 export function darajaPassword(
