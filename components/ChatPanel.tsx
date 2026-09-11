@@ -116,7 +116,13 @@ export default function ChatPanel() {
 // Works the same regardless of which AI_PROVIDER is configured server-side.
 // ---------------------------------------------------------------------------
 async function sendMessage(text: string): Promise<ChatResponse> {
-  throw new Error("sendMessage() not implemented yet — see Module 02");
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: text }),
+  });
+  if (!res.ok) throw new Error(`Chat request failed: ${res.status}`);
+  return res.json();
 }
 
 // ---------------------------------------------------------------------------
